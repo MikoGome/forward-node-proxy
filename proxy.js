@@ -95,4 +95,4 @@ httpServer.on('connect', (req, clientSocket, head) => { // listen only for HTTP/
   }
 })
 
-httpServer.listen(8080, () => console.log("HTTP Proxy started at port 8080"));
+httpServer.listen(process.env.PORT, () => console.log("HTTP Proxy started at port " + process.env.PORT));
