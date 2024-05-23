@@ -13,28 +13,34 @@ const app = (req, res) => {
     const options = {
       method: req.method,
       headers: req.headers,
+      gzip: true
     }
     if(data.length) options.body = String(Buffer.concat(data));
-    /*
-    try {
-      const response = await fetch(url, options);
-      const headers = Object.fromEntries(response.headers);
-      res.writeHead(response.status, headers);
-      if(response.body) await pipeline(response.body, res);
-    } catch(e) {
-      console.log(e);
-    } finally {
-      res.end();
-    }
-    */
+
     const proxy = http.request(url, options, response => {
-      response.pipe(res, {
+      const finalRes = response.pipe(res, {
         end: true
       });
+      finalRes.writeHead(response.statusCode, response.headers);
     });
     
     req.pipe(proxy, {
       end: true
+    });
+
+    //ERROR HANDLING
+    // Handle proxy request errors
+    proxy.on('error', err => {
+      console.error('Proxy request error:', err);
+      res.writeHead(500, { 'Content-Type': 'text/plain' });
+      res.end('Internal Server Error');
+    });
+
+     // Handle request errors (e.g., invalid URL)
+    req.on('error', err => {
+      console.error('Client request error:', err);
+      res.writeHead(400, { 'Content-Type': 'text/plain' });
+      res.end('Bad Request');
     });
     
   });
