@@ -14,11 +14,29 @@ const app = (req, res) => {
       method: req.method,
       headers: req.headers,
     }
-    if(data.length) options.body = Buffer.concat(data);
-    const response = await fetch(url, options);
-    const headers = Object.fromEntries(response.headers);
-    res.writeHead(response.status, headers);
-    if(response.body) await pipeline(response.body, res);
+    if(data.length) options.body = String(Buffer.concat(data));
+    /*
+    try {
+      const response = await fetch(url, options);
+      const headers = Object.fromEntries(response.headers);
+      res.writeHead(response.status, headers);
+      if(response.body) await pipeline(response.body, res);
+    } catch(e) {
+      console.log(e);
+    } finally {
+      res.end();
+    }
+    */
+    const proxy = http.request(url, options, response => {
+      response.pipe(res, {
+        end: true
+      });
+    });
+    
+    req.pipe(proxy, {
+      end: true
+    });
+    
   });
 };
 
