@@ -13,8 +13,7 @@ const app = (req, res) => {
   req.on('end', async () => {
     const options = {
       method: req.method,
-      headers: req.headers,
-      gzip: true
+      headers: req.headers
     }
     if(data.length) options.body = String(Buffer.concat(data));
 
