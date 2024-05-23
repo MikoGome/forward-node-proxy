@@ -5,6 +5,8 @@ const net = require('net');
 const fs = require('fs');
 const {pipeline} = require('stream/promises');
 
+const PORT = process.env.PORT || 8080;
+
 const app = (req, res) => {
   const url = req.url;
   let data = [];
@@ -95,4 +97,4 @@ httpServer.on('connect', (req, clientSocket, head) => { // listen only for HTTP/
   }
 })
 
-httpServer.listen(process.env.PORT, () => console.log("HTTP Proxy started at port " + process.env.PORT));
+httpServer.listen(PORT, () => console.log("HTTP Proxy started at port " + PORT));
