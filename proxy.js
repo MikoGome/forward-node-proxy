@@ -3,7 +3,6 @@ const https = require("https");
 const net = require('net');
 
 const fs = require('fs');
-const {pipeline} = require('stream/promises');
 
 const PORT = process.env.PORT || 8080;
 
